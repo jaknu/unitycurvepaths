@@ -17,6 +17,7 @@ public class FollowHermiteCurve : MonoBehaviour
 
     public PointWithTangent[] points;
     public float duration;
+    public bool loop;
 
     float _startTime;
     Transform _transform;
@@ -33,7 +34,13 @@ public class FollowHermiteCurve : MonoBehaviour
 
     public void Update()
     {
-        _transform.position = position(Mathf.Clamp01((Time.time - _startTime) / duration));
+        float t = (Time.time - _startTime) / duration;
+        if (loop)
+            t = t % 1f;
+        else
+            t = Mathf.Clamp01(t);
+
+        _transform.position = position(t);
     }
 
     public void OnDrawGizmos()
@@ -42,16 +49,16 @@ public class FollowHermiteCurve : MonoBehaviour
 
         if (points.Length < 1)
             return;
-        
+
         for (int i = 0; i < points.Length; i++) {
             Gizmos.DrawSphere(points[i].point, GIZMO_SPHERE_SIZE);
             Gizmos.DrawLine(points[i].point, points[i].point + points[i].tangent);
         }
 
         Vector3 p = points[0].point;
-        for (int i = 1; i < points.Length; i++) {
-            Gizmos.DrawLine(p, points[i].point);
-            p = points[i].point;
+        for (int i = 1; i < points.Length + (loop ? 1 : 0); i++) {
+            Gizmos.DrawLine(p, points[i % points.Length].point);
+            p = points[i % points.Length].point;
         }
 
         Gizmos.color = GIZMO_COLOR_CURVE;
@@ -65,14 +72,17 @@ public class FollowHermiteCurve : MonoBehaviour
 
     Vector3 position(float t)
     {
-        int segmentCount = points.Length - 1;
-
+        int segmentCount = points.Length - (loop ? 0 : 1);
         float segmentLength = 1f / segmentCount;
         int segmentIndex = Mathf.Clamp(Mathf.FloorToInt(t / segmentLength), 0, segmentCount-1);
 
         float segmentT = (t - segmentIndex * segmentLength) / segmentLength;
 
-        return hermite(segmentT, points[segmentIndex], points[segmentIndex+1]);
+        return hermite(
+            segmentT, 
+            points[segmentIndex], 
+            points[(segmentIndex+1) % points.Length]
+        );
     }
 
     static Vector3 hermite(float t, PointWithTangent a, PointWithTangent b)
