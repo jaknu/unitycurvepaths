@@ -10,10 +10,10 @@ public class PointWithTangent
 
 public class FollowHermiteCurve : MonoBehaviour 
 {
-    static Color GIZMO_COLOR_HELPERS = Color.grey;
-    static Color GIZMO_COLOR_CURVE = Color.white;
-    const float GIZMO_SPHERE_SIZE = 0.1f;
-    const int GIZMO_CURVE_LINE_SEGMENTS = 100;
+    static Color GIZMO_COLOR_HELPERS       = Color.grey;
+    static Color GIZMO_COLOR_CURVE         = Color.white;
+    const float  GIZMO_SPHERE_SIZE         = 0.1f;
+    const int    GIZMO_CURVE_LINE_SEGMENTS = 100;
 
     public PointWithTangent[] points;
     public float duration;
