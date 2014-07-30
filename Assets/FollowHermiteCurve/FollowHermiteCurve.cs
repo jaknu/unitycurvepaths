@@ -35,10 +35,11 @@ public class FollowHermiteCurve : MonoBehaviour
     public void Update()
     {
         float t = (Time.time - _startTime) / duration;
-        if (loop)
+        if (loop) {
             t = t % 1f;
-        else
+        } else {
             t = Mathf.Clamp01(t);
+        }
 
         _transform.position = position(t);
     }
@@ -47,8 +48,9 @@ public class FollowHermiteCurve : MonoBehaviour
     {
         Gizmos.color = GIZMO_COLOR_HELPERS;
 
-        if (points.Length < 1)
+        if (points.Length < 1) {
             return;
+        }
 
         for (int i = 0; i < points.Length; i++) {
             Gizmos.DrawSphere(points[i].point, GIZMO_SPHERE_SIZE);
@@ -74,7 +76,11 @@ public class FollowHermiteCurve : MonoBehaviour
     {
         int segmentCount = points.Length - (loop ? 0 : 1);
         float segmentLength = 1f / segmentCount;
-        int segmentIndex = Mathf.Clamp(Mathf.FloorToInt(t / segmentLength), 0, segmentCount-1);
+        int segmentIndex = Mathf.Clamp(
+            Mathf.FloorToInt(t / segmentLength), 
+            0, 
+            segmentCount-1
+        );
 
         float segmentT = (t - segmentIndex * segmentLength) / segmentLength;
 
