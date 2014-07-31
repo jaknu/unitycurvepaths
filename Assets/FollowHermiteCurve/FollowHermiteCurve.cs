@@ -8,6 +8,15 @@ public class PointWithTangent
     public Vector3 tangent;
 }
 
+/*
+ * This script is intended as an example or starting point for having an object follow a hermite curve.
+ * The gameobject this is attached to will follow a path which takes it through each of the given points
+ * following the direction of the associated tangent at each one.
+ * 
+ * The hermite curve formula is yanked from from section 10.2.3 of the excellent book 
+ * "Essential Mathematics For Games & Interactive Applications, A Programmers Guide, Second Edition",
+ * by James M. Van Verth and Lars M. Bishop. (ISBN: 978-0-12-374297-1)
+ */
 public class FollowHermiteCurve : MonoBehaviour 
 {
     static Color GIZMO_COLOR_HELPERS       = Color.grey;
@@ -72,6 +81,10 @@ public class FollowHermiteCurve : MonoBehaviour
         }
     }
 
+    /*
+     * Get the point on the path for time t where t <= 0.0 will yield the position of
+     * the first point on the path and t >= 1.0 will yield the position of the last.
+     */
     Vector3 position(float t)
     {
         int segmentCount = points.Length - (loop ? 0 : 1);
@@ -91,6 +104,12 @@ public class FollowHermiteCurve : MonoBehaviour
         );
     }
 
+    /* 
+     * Get the point on the path between points a and b for the "time" t where
+     * t <= 0.0 will yield the position a and t >= will yield b.
+     * 
+     * Think of it as a hermite interpolation.
+     */
     static Vector3 hermite(float t, PointWithTangent a, PointWithTangent b)
     {
         return (2f*t*t*t - 3f*t*t + 1f) * a.point
